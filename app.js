@@ -50,7 +50,9 @@ if(process.env.NODE_ENV !== 'production'){
  * Notice that using +srv on the protocol causes the 
  * connection to use ssl by default.
  **********/
-const uri = 'mongodb+srv://mrwoodring:BadPassword@cluster0.dxk6b.mongodb.net/Journaler?retryWrites=true&w=majority'
+ 
+ // Jillian's Database
+const uri = 'mongodb+srv://mrwoodring:toomanysecrets@cluster0.nhkr8.mongodb.net/myData?retryWrites=true&w=majority'
 mongoose.connect(uri).
 	catch( error => 
 		{ 
