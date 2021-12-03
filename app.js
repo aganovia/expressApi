@@ -52,7 +52,7 @@ if(process.env.NODE_ENV !== 'production'){
  **********/
  
  // Jillian's Database
-const uri = 'mongodb+srv://mrwoodring:toomanysecrets@cluster0.nhkr8.mongodb.net/myData?retryWrites=true&w=majority'
+const uri = 'mongodb+srv://mrwoodring:toomanysecrets@cluster0.nhkr8.mongodb.net/myJournal?retryWrites=true&w=majority'
 
 mongoose.connect(uri).
 	catch( error => 

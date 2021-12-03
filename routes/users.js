@@ -140,8 +140,8 @@ router.get('/:userId', checkAuth, async function(req, res, next){
  * POST a new user.
  * Only administrators can add new users.
  * Admin account cred:
- * 		email: bobbytables@drop.com
- * 		password: sanitizeYourDB
+ * 		email: lilbobbytables@drop.net
+ * 		password: password
  */
 router.post('/', checkAuth, async function(req, res, next){
 	console.log(req.body);
