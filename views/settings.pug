@@ -1,0 +1,16 @@
+extends layout
+
+block content
+	include ./menu.pug
+	if user != null
+		label(for='username'): b Change Username:
+		input(type='text' name='username')
+
+		label(for='password'): b Change Password:
+		input(type='text' name='password')
+
+		if user.admin == true
+			li: a(href='/addUser') Add a New User
+	
+	else
+		include ./login.pug
