@@ -59,4 +59,12 @@ router.get('/journal', async function(req, res){
 	}
 });
 
+router.get('/settings', async function(req, res){
+  if(!req.isAuthenticated()){
+		res.redirect('/');
+  } else {
+    res.render('settings');
+  }
+});
+
 module.exports = router;
