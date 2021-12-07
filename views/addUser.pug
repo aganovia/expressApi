@@ -3,5 +3,21 @@ extends layout
 block content
 	include ./menu.pug
 	h1 Add a New User
-	label(for='email'): b Email:
-	label(for='password'): b Password: 
+
+	form(action='/users' method='post')
+		label(for='email'): b Email:
+		input(type='text' name='email')
+
+		label(for='password'): b Password:
+		input(type='password' name='password')
+
+		if user != null 
+			if user.admin == true
+				label(for='admin'): b Admin
+				input(
+					type='checkbox'
+  					name='admin'
+  					value='true'
+				)
+
+		button(type='submit') Create New User

@@ -37,13 +37,9 @@ router.post('/login', checkAuthLocal, function(req, res, next){
   res.redirect('/');
 });
 
-router.get('/addUser', checkAuthLocal, function(req, res, next){
-  if(req.user.admin){
-	res.render('addUser');
-  } else {
-	res.render('index');
-  }
-});
+router.get('/addUser', function(req, res, next) {
+  res.render('addUser');
+})
 
 router.get('/logout', function(req, res){
 	req.logout();

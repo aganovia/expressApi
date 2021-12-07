@@ -138,27 +138,21 @@ router.get('/:userId', checkAuth, async function(req, res, next){
 
 /**
  * POST a new user.
- * Only administrators can add new users.
- * Admin account cred:
- * 		email: lilbobbytables@drop.net
- * 		password: password
+ * Anyone can register a new user.
+ * Only admins can register new admin users.
  */
-router.post('/', checkAuth, async function(req, res, next){
+router.post('/', async function(req, res, next){
 	console.log(req.body);
-	if(req.user.admin){
-		var newUser = User();
-		newUser.email = req.body.username;
-		newUser.salt = crypto.randomBytes(32).toString('hex');
-		console.log("Received: " + req.body.password);
-		newUser.password = pbkdf2.pbkdf2Sync(req.body.password, newUser.salt, 1, 32, 'sha512').toString('hex');
-		newUser.admin = false;
-		newUser.save();
-		res.send(200);
-        } else {
-		var error = new Error("Not authorized.");
-		error.status = 401;
-		throw error;
-        }
+	
+	var newUser = User();
+	newUser.email = req.body.email;
+	newUser.salt = crypto.randomBytes(32).toString('hex');
+	console.log("Received: " + req.body.password);
+	newUser.password = pbkdf2.pbkdf2Sync(req.body.password, newUser.salt, 1, 32, 'sha512').toString('hex');
+	if (req.body.admin)
+		newUser.admin = req.body.admin;
+	newUser.save();
+	res.redirect('/')
 });
 
 module.exports = { checkAuth, router, User, validPassword };

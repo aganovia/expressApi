@@ -4,11 +4,9 @@ menu.menu
   li: a(href='/') Home
   li: a(href='/journal') Journal
   li: a(href='/about') About
-<<<<<<< HEAD
   li: a(href='/settings') Settings
-  
-=======
-  li: a(href='/addUser') Register
->>>>>>> main
+
   if user != null
     li: a(href='/logout') Log Out
+  else
+    li: a(href='/addUser') Register
