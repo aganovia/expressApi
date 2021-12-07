@@ -58,8 +58,8 @@ const entrySchema = new Schema({
 		required: true
 	},
 	location: {
-		type: pointSchema,
-		required: true
+		type: pointSchema
+		// required: true
 	},
 	weather: String
 });
@@ -86,7 +86,7 @@ router.get('/:entryId', checkAuth, async function(req, res, next){
 	if(entry.userId == req.user._id || req.user.admin == true){
 		res.json(entry);
 	} else {
-		var error = new Error("Not found.");
+		var error = new Error("Not found. Cannot make entry.");
 		error.status = 404;
 			throw error;
 	}
@@ -96,7 +96,7 @@ router.get('/:entryId', checkAuth, async function(req, res, next){
  * Allow logged in user to create new entry.
  */
 router.post('/', checkAuth, async function(req, res, next){
-	if(!(req.body.entry && req.body.mood && req.body.location)){
+	if(!(req.body.entry && req.body.mood)){
 		var error = new Error('Missing required information.');
 		error.status = 400;
 		throw error;
@@ -104,8 +104,8 @@ router.post('/', checkAuth, async function(req, res, next){
 	var entry = new Entry({
 		userId: req.user._id,
 		entry: req.body.entry,
-		mood: req.body.mood,
-		location: req.body.location
+		mood: req.body.mood
+		// location: req.body.location
 	});
 	entry.save();
 	res.status(200).send("Entry saved.");

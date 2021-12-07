@@ -2,6 +2,21 @@ extends layout
 
 block content
 	include ./menu.pug
+
+	h2 Create an Entry
+	form(action='/entries' method='post')
+		label(for='entry'): b Entry:
+		input(type='text' name='entry')
+		br
+		label(for='mood'): b Mood:
+		input(type='mood' name='mood')
+		br
+		label(for='location'): b Location:
+		input(type='location' name='location')
+		br
+		button(type='submit') Submit
+
+	h2 Entries
 	table.table.table-striped
 		tr
 		th Date
