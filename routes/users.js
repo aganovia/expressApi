@@ -75,7 +75,7 @@ const validPassword = function(password, salt, hash){
  */
 passport.use(new Strategy(
 	function(username, password, done) {
-	  User.findOne({ username: username }, function (err, user) {
+	  User.findOne({ email: username }, function (err, user) {
 		  // Can't connect to Db?  We're done.
 		if (err) {
 			return done(err);
