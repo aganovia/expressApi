@@ -108,7 +108,8 @@ router.post('/', checkAuth, async function(req, res, next){
 		// location: req.body.location
 	});
 	entry.save();
-	res.status(200).send("Entry saved.");
+	res.status(200);
+	res.redirect('/journal');
 });
 
 /**
