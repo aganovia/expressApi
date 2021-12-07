@@ -152,7 +152,7 @@ router.post('/', async function(req, res, next){
 	if (req.body.admin)
 		newUser.admin = req.body.admin;
 	newUser.save();
-	res.redirect('/')
+	res.redirect('/addUserSuccess');
 });
 
 module.exports = { checkAuth, router, User, validPassword };

@@ -41,6 +41,10 @@ router.get('/addUser', function(req, res, next) {
   res.render('addUser');
 })
 
+router.get('/addUserSuccess', function(req, res, next) {
+  res.render('addUserSuccess');
+})
+
 router.get('/logout', function(req, res){
 	req.logout();
 	res.redirect('/');
