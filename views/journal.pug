@@ -16,15 +16,30 @@ block content
 		br
 		button(type='submit') Submit
 
+	//- h2 Delete an Entry 
+	//- form(action=`entries/${entryId}` method='post')
+	//- 	label(for='entryId'): b Entry ID:
+	//- 	input(type='text' entryId='entryId')
+	//- 	br
+	//- 	button(type='submit') Submit
+
 	h2 Entries
 	table.table.table-striped
 		tr
 		th Date
 		th Mood
 		th Entry
+		th Entry ID
 
 		each e in entries
 			tr
 			td= e.date
 			td= e.mood
-			td= e.entry 
+			td= e.entry
+			td= e._id
+			td 
+				button(type='modify') Modify
+			td 
+				form(action=`/entries/${e._id}` method='get')
+					input(type='hidden' name='_method' value='delete')
+					button(type='submit') Delete

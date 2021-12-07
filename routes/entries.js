@@ -146,15 +146,28 @@ router.put('/:entryId', checkAuth, async function(req, res, next){
  * Allow a user to delete one of their own entries.
  */
 router.delete('/:entryId', checkAuth, async function(req, res,next){
-	const entry = Entry.deleteOne({
-		userId : req.users._id,
-		_id : req.params.entryId
-	});
+	// const entry = Entry.deleteOne({
+	// 	userId : req.users._id,
+	// 	_id : req.params.entryId
+	// });
 
-	if(!entry){
-		res.status(404).send("Not found.");
+	// if(!entry){
+	// 	res.status(404).send("Not found.");
+	// 	next();
+	// }
+
+	try {
+		Entry.deleteOne({
+			userId : req.users._id,
+			_id : req.params.entryId
+		})
+	} catch {
+		res.status(404).send("Entry not found.")
 		next();
 	}
+
+	res.status(200);
+	res.redirect('/journal');
 });
 
 module.exports = { router, Entry };
