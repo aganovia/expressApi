@@ -145,29 +145,39 @@ router.put('/:entryId', checkAuth, async function(req, res, next){
 /**
  * Allow a user to delete one of their own entries.
  */
-router.delete('/:entryId', checkAuth, async function(req, res,next){
-	// const entry = Entry.deleteOne({
-	// 	userId : req.users._id,
-	// 	_id : req.params.entryId
-	// });
+router.post('/delete/:entryId', checkAuth, async function(req, res,next){
+	
+	console.log("PLEASE delete")
+	console.log(`User ID: ${req.user._id} \t Entry ID: ${req.params.entryId}`)
+	
+	const deleteThis = Entry.findOne({
+		userId : req.user._id,
+		_id : req.params.entryId
+	});
 
-	// if(!entry){
-	// 	res.status(404).send("Not found.");
+	console.log(deleteThis);
+
+	if(!deleteThis){
+		res.status(404).send("Entry not found.");
+		next();
+	} else {
+		Entry.deleteOne(deleteThis);
+		res.status(200);
+		res.redirect('/journal');
+	}
+
+	// try {
+	// 	Entry.findOneAndDelete({
+	// 		userId : req.user._id,
+	// 		_id : req.params.entryId
+	// 	});
+	// } catch {
+	// 	res.status(404).send("Entry not found.")
 	// 	next();
 	// }
 
-	try {
-		Entry.deleteOne({
-			userId : req.users._id,
-			_id : req.params.entryId
-		})
-	} catch {
-		res.status(404).send("Entry not found.")
-		next();
-	}
-
-	res.status(200);
-	res.redirect('/journal');
+	// res.status(200);
+	// res.redirect('/journal');
 });
 
 module.exports = { router, Entry };

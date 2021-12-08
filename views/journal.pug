@@ -40,6 +40,5 @@ block content
 			td 
 				button(type='modify') Modify
 			td 
-				form(action=`/entries/${e._id}` method='get')
-					input(type='hidden' name='_method' value='delete')
+				form(action=`/entries/delete/${e._id}` method='post')
 					button(type='submit') Delete
