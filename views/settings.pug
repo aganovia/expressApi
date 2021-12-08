@@ -2,15 +2,21 @@ extends layout
 
 block content
 	include ./menu.pug
-	if user != null
-		label(for='username'): b Change Username:
-		input(type='text' name='username')
 
-		label(for='password'): b Change Password:
-		input(type='text' name='password')
+	p *only one can be changed at a time
+
+	if user != null
+		form(action='/users/update' method='post')
+			label(for='email'): b New Email:
+			input(type='text' name='email')
+			button(type='submit') Change
+
+			label(for='password'): b New Password:
+			input(type='password' name='password')
+			button(type='submit') Change
 
 		if user.admin == true
-			li: a(href='/addUser') Add a New User
+				li: a(href='/addUser') Add a New User
 	
 	else
 		include ./login.pug

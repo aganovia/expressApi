@@ -74,8 +74,8 @@ const validPassword = function(password, salt, hash){
  * how it works with our API here.
  */
 passport.use(new Strategy(
-	function(username, password, done) {
-	  User.findOne({ email: username }, function (err, user) {
+	function(email, password, done) {
+	  User.findOne({ email: email }, function (err, user) {
 		  // Can't connect to Db?  We're done.
 		if (err) {
 			return done(err);
@@ -153,6 +153,32 @@ router.post('/', async function(req, res, next){
 		newUser.admin = req.body.admin;
 	newUser.save();
 	res.redirect('/addUserSuccess');
+});
+
+router.post('/update', async function(req, res, next){
+
+	try {
+
+		if (req.body.email != ""){
+			var user = await User.updateOne(
+				{ email: req.user.email },
+				{ $set: { email: req.body.email } }
+			);
+		}
+
+		if (req.body.password != ""){
+			let password = pbkdf2.pbkdf2Sync(req.body.password, req.user.salt, 1, 32, 'sha512').toString('hex');
+			var user = await User.updateOne(
+				{ email: req.user.email },
+				{ $set: { password: password } }
+			);
+		}
+		
+		res.redirect('/');
+
+	} catch {
+		res.sendStatus(500);
+	}
 });
 
 module.exports = { checkAuth, router, User, validPassword };
