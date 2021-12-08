@@ -147,37 +147,28 @@ router.put('/:entryId', checkAuth, async function(req, res, next){
  */
 router.post('/delete/:entryId', checkAuth, async function(req, res,next){
 	
-	console.log("PLEASE delete")
-	console.log(`User ID: ${req.user._id} \t Entry ID: ${req.params.entryId}`)
-	
-	const deleteThis = Entry.findOne({
-		userId : req.user._id,
-		_id : req.params.entryId
+	// make sure the entry exists and is owned by user
+	const entries = await Entry.find({ 
+		$and: [
+			{ userId: req.user._id },
+			{ _id: req.params.entryId }
+		]
 	});
-
-	console.log(deleteThis);
-
-	if(!deleteThis){
-		res.status(404).send("Entry not found.");
-		next();
-	} else {
-		Entry.deleteOne(deleteThis);
-		res.status(200);
-		res.redirect('/journal');
+ 
+	// if no entries found somehow, 404
+	if(entries.length == 0){
+		res.status(404).send("No notes to delete...");
+		return;
 	}
-
-	// try {
-	// 	Entry.findOneAndDelete({
-	// 		userId : req.user._id,
-	// 		_id : req.params.entryId
-	// 	});
-	// } catch {
-	// 	res.status(404).send("Entry not found.")
-	// 	next();
-	// }
-
-	// res.status(200);
-	// res.redirect('/journal');
+ 
+	// otherwise, delete the entry
+	try {
+		var entry = await Entry.findByIdAndRemove(req.params.entryId);
+		res.status(200);
+		res.redirect('/journal')
+	} catch {
+		res.status(404).redirect('/journal')
+	}
 });
 
 module.exports = { router, Entry };
