@@ -96,20 +96,20 @@ router.get('/:entryId', checkAuth, async function(req, res, next){
  * Allow logged in user to create new entry.
  */
 router.post('/', async function(req, res, next){
-	if(!(req.body.entry && req.body.mood)){
-		var error = new Error('Missing required information.');
-		error.status = 400;
-		throw error;
+	if(!req.body.entry || !req.body.mood){
+		res.status(404);
+		res.redirect('/journal')
+	} else {
+		var entry = new Entry({
+			userId: req.user._id,
+			entry: req.body.entry,
+			mood: req.body.mood
+			// location: req.body.location
+		});
+		entry.save();
+		res.status(200);
+		res.redirect('/journal');
 	}
-	var entry = new Entry({
-		userId: req.user._id,
-		entry: req.body.entry,
-		mood: req.body.mood
-		// location: req.body.location
-	});
-	entry.save();
-	res.status(200);
-	res.redirect('/journal');
 });
 
 /**
