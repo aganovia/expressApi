@@ -58,8 +58,8 @@ const entrySchema = new Schema({
 		required: true
 	},
 	location: {
-		type: pointSchema,
-		required: true
+		type: pointSchema
+		// required: true
 	},
 	weather: String
 });
@@ -86,7 +86,7 @@ router.get('/:entryId', checkAuth, async function(req, res, next){
 	if(entry.userId == req.user._id || req.user.admin == true){
 		res.json(entry);
 	} else {
-		var error = new Error("Not found.");
+		var error = new Error("Not found. Cannot make entry.");
 		error.status = 404;
 			throw error;
 	}
@@ -95,64 +95,76 @@ router.get('/:entryId', checkAuth, async function(req, res, next){
 /**
  * Allow logged in user to create new entry.
  */
-router.post('/', checkAuth, async function(req, res, next){
-	if(!(req.body.entry && req.body.mood && req.body.location)){
-		var error = new Error('Missing required information.');
-		error.status = 400;
-		throw error;
+router.post('/', async function(req, res, next){
+	if(!req.body.entry || !req.body.mood){
+		res.status(404);
+		res.redirect('/journal')
+	} else {
+		var entry = new Entry({
+			userId: req.user._id,
+			entry: req.body.entry,
+			mood: req.body.mood
+			// location: req.body.location
+		});
+		entry.save();
+		res.status(200);
+		res.redirect('/journal');
 	}
-	var entry = new Entry({
-		userId: req.user._id,
-		entry: req.body.entry,
-		mood: req.body.mood,
-		location: req.body.location
-	});
-	entry.save();
-	res.status(200).send("Entry saved.");
 });
 
 /**
  * Allow a user to modify their own entry.
  */
-router.put('/:entryId', checkAuth, async function(req, res, next){
+router.post('/modify/:entryId', async function(req, res, next){
 	var entry = await Entry.findOne({
 		userId : req.user._id,
 		_id : req.params.entryId
 	});
 
-	if(!entry){
-		var error = new Error('Entry not found.');
-		error.status = 404;
-		throw error;
+	try {
+		if (req.body.entry == '' && req.body.mood == '') {
+			// set both to previous values
+			req.body.entry = entry.entry;
+			req.body.mood = entry.mood;
+			var newEntry = await Entry.findByIdAndUpdate(req.params.entryId, req.body);
+		} else if (req.body.mood == '' && req.body.entry != '') {
+			// set mood to prev mood
+			req.body.mood = entry.mood;
+			var newEntry = await Entry.findByIdAndUpdate(req.params.entryId, req.body);
+		} else if (req.body.entry == '' && req.body.mood != '') {
+			// set entry to prev entry
+			req.body.entry = entry.entry;
+			var entry = await Entry.findByIdAndUpdate(req.params.entryId, req.body);
+		} else {
+			// update both
+			var entry = await Entry.findByIdAndUpdate(req.params.entryId, req.body);
+		}
+		res.status(200);
+		res.redirect('/journal');
+	} catch {
+		res.sendStatus(404);
 	}
 
-	if(!(req.body.entry && req.body.mood && req.body.location && req.body.weather)){
-		console.log(req.body);
-		var error = new Error('Missing required information.');
-		error.status = 400;
-		throw error;
-	}
-
-	entry.entry = req.body.entry;
-	entry.mood = req.body.mood;
-	entry.location = req.body.location;
-	entry.weather = req.body.weather;
-	entry.save();
-	res.status(200).send('Entry saved.');
 });
 
 /**
  * Allow a user to delete one of their own entries.
  */
-router.delete('/:entryId', checkAuth, async function(req, res,next){
-	const entry = Entry.deleteOne({
-		userId : req.users._id,
+router.post('/delete/:entryId', async function(req, res,next){
+	
+	// find entry and make sure it belongs to user
+	var entry = await Entry.findOne({
+		userId : req.user._id,
 		_id : req.params.entryId
 	});
 
-	if(!entry){
-		res.status(404).send("Not found.");
-		next();
+	// try to delete the entry
+	try {
+		var entry = await Entry.findByIdAndRemove(req.params.entryId);
+		res.status(200);
+		res.redirect('/journal')
+	} catch {
+		res.status(404).redirect('/journal')
 	}
 });
 
