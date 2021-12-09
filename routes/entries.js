@@ -95,7 +95,7 @@ router.get('/:entryId', checkAuth, async function(req, res, next){
 /**
  * Allow logged in user to create new entry.
  */
-router.post('/', checkAuth, async function(req, res, next){
+router.post('/', async function(req, res, next){
 	if(!(req.body.entry && req.body.mood)){
 		var error = new Error('Missing required information.');
 		error.status = 400;
