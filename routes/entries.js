@@ -121,16 +121,9 @@ router.post('/modify/:entryId', async function(req, res, next){
 		_id : req.params.entryId
 	});
 
-	if(!entry){
-		var error = new Error('Entry not found.');
-		error.status = 404;
-		throw error;
-	}
-
 	try {
 		if (req.body.entry == '' && req.body.mood == '') {
 			// set both to previous values
-			console.log("NO PARAMS BRO");
 			req.body.entry = entry.entry;
 			req.body.mood = entry.mood;
 			var newEntry = await Entry.findByIdAndUpdate(req.params.entryId, req.body);
@@ -157,23 +150,15 @@ router.post('/modify/:entryId', async function(req, res, next){
 /**
  * Allow a user to delete one of their own entries.
  */
-router.post('/delete/:entryId', checkAuth, async function(req, res,next){
+router.post('/delete/:entryId', async function(req, res,next){
 	
-	// make sure the entry exists and is owned by user
-	const entries = await Entry.find({ 
-		$and: [
-			{ userId: req.user._id },
-			{ _id: req.params.entryId }
-		]
+	// find entry and make sure it belongs to user
+	var entry = await Entry.findOne({
+		userId : req.user._id,
+		_id : req.params.entryId
 	});
- 
-	// if no entries found somehow, 404
-	if(entries.length == 0){
-		res.status(404).send("No notes to delete...");
-		return;
-	}
- 
-	// otherwise, delete the entry
+
+	// try to delete the entry
 	try {
 		var entry = await Entry.findByIdAndRemove(req.params.entryId);
 		res.status(200);
