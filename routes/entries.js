@@ -115,7 +115,7 @@ router.post('/', async function(req, res, next){
 /**
  * Allow a user to modify their own entry.
  */
-router.put('/:entryId', checkAuth, async function(req, res, next){
+router.post('/modify/:entryId', async function(req, res, next){
 	var entry = await Entry.findOne({
 		userId : req.user._id,
 		_id : req.params.entryId
@@ -127,19 +127,31 @@ router.put('/:entryId', checkAuth, async function(req, res, next){
 		throw error;
 	}
 
-	if(!(req.body.entry && req.body.mood && req.body.location && req.body.weather)){
-		console.log(req.body);
-		var error = new Error('Missing required information.');
-		error.status = 400;
-		throw error;
+	try {
+		if (req.body.entry == '' && req.body.mood == '') {
+			// set both to previous values
+			console.log("NO PARAMS BRO");
+			req.body.entry = entry.entry;
+			req.body.mood = entry.mood;
+			var newEntry = await Entry.findByIdAndUpdate(req.params.entryId, req.body);
+		} else if (req.body.mood == '' && req.body.entry != '') {
+			// set mood to prev mood
+			req.body.mood = entry.mood;
+			var newEntry = await Entry.findByIdAndUpdate(req.params.entryId, req.body);
+		} else if (req.body.entry == '' && req.body.mood != '') {
+			// set entry to prev entry
+			req.body.entry = entry.entry;
+			var entry = await Entry.findByIdAndUpdate(req.params.entryId, req.body);
+		} else {
+			// update both
+			var entry = await Entry.findByIdAndUpdate(req.params.entryId, req.body);
+		}
+		res.status(200);
+		res.redirect('/journal');
+	} catch {
+		res.sendStatus(404);
 	}
 
-	entry.entry = req.body.entry;
-	entry.mood = req.body.mood;
-	entry.location = req.body.location;
-	entry.weather = req.body.weather;
-	entry.save();
-	res.status(200).send('Entry saved.');
 });
 
 /**

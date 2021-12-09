@@ -9,19 +9,12 @@ block content
 		input(type='text' name='entry')
 		br
 		label(for='mood'): b Mood:
-		input(type='mood' name='mood')
+		input(type='text' name='mood')
 		br
 		// label(for='location'): b Location:
 		// input(type='location' name='location')
 		// br
 		button(type='submit') Submit
-
-	//- h2 Delete an Entry 
-	//- form(action=`entries/${entryId}` method='post')
-	//- 	label(for='entryId'): b Entry ID:
-	//- 	input(type='text' entryId='entryId')
-	//- 	br
-	//- 	button(type='submit') Submit
 
 	h2 Entries
 	table.table.table-striped
@@ -29,16 +22,22 @@ block content
 		th Date
 		th Mood
 		th Entry
-		th Entry ID
+		th Update Mood
+		th Update Entry
 
 		each e in entries
 			tr
 			td= e.date
 			td= e.mood
 			td= e.entry
-			td= e._id
+
 			td 
-				button(type='modify') Modify
+				form(action=`/entries/modify/${e._id}` method='post')
+					input(type='text' name='mood')
+					td
+						input(type='text' name='entry')
+					td
+						button(type='submit') Modify
 			td 
 				form(action=`/entries/delete/${e._id}` method='post')
 					button(type='submit') Delete
