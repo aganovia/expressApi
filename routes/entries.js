@@ -96,6 +96,12 @@ router.get('/:entryId', checkAuth, async function(req, res, next){
  * Allow logged in user to create new entry.
  */
 router.post('/', async function(req, res, next){
+	if(!req.isAuthenticated()) {
+		res.status(404);
+		console.log("User not authenticated.")
+		res.redirect('/journal')
+		return;
+	} else {
 	if(!req.body.entry || !req.body.mood){
 		res.status(404);
 		res.redirect('/journal')
@@ -110,12 +116,20 @@ router.post('/', async function(req, res, next){
 		res.status(200);
 		res.redirect('/journal');
 	}
+}
 });
 
 /**
  * Allow a user to modify their own entry.
  */
 router.post('/modify/:entryId', async function(req, res, next){
+
+	if(!req.isAuthenticated()) {
+		res.status(404);
+		console.log("User not authenticated.")
+		res.redirect('/journal')
+		return;
+	} else {
 	var entry = await Entry.findOne({
 		userId : req.user._id,
 		_id : req.params.entryId
@@ -144,6 +158,7 @@ router.post('/modify/:entryId', async function(req, res, next){
 	} catch {
 		res.sendStatus(404);
 	}
+}
 
 });
 
@@ -151,7 +166,12 @@ router.post('/modify/:entryId', async function(req, res, next){
  * Allow a user to delete one of their own entries.
  */
 router.post('/delete/:entryId', async function(req, res,next){
-	
+	if(!req.isAuthenticated()) {
+		res.status(404);
+		console.log("User not authenticated.")
+		res.redirect('/journal')
+		return;
+	} else {
 	// find entry and make sure it belongs to user
 	var entry = await Entry.findOne({
 		userId : req.user._id,
@@ -166,6 +186,7 @@ router.post('/delete/:entryId', async function(req, res,next){
 	} catch {
 		res.status(404).redirect('/journal')
 	}
+}
 });
 
 module.exports = { router, Entry };
