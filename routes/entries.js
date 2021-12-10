@@ -173,14 +173,14 @@ router.post('/delete/:entryId', async function(req, res,next){
 		return;
 	} else {
 	// find entry and make sure it belongs to user
-	var entry = await Entry.findOne({
+	var findEntry = await Entry.findOne({
 		userId : req.user._id,
 		_id : req.params.entryId
 	});
 
 	// try to delete the entry
 	try {
-		var entry = await Entry.findByIdAndRemove(req.params.entryId);
+		var entry = await Entry.findByIdAndRemove(findEntry);
 		res.status(200);
 		res.redirect('/journal')
 	} catch {
