@@ -37,13 +37,13 @@ router.post('/login', checkAuthLocal, function(req, res, next){
   res.redirect('/');
 });
 
-router.get('/addUser', checkAuthLocal, function(req, res, next){
-  if(req.user.admin){
-	res.render('addUser');
-  } else {
-	res.render('index');
-  }
-});
+router.get('/addUser', function(req, res, next) {
+  res.render('addUser');
+})
+
+router.get('/addUserSuccess', function(req, res, next) {
+  res.render('addUserSuccess');
+})
 
 router.get('/logout', function(req, res){
 	req.logout();
@@ -57,6 +57,27 @@ router.get('/journal', async function(req, res){
 		var entries = await Entry.find({ userId : req.user._id });
 		res.render('journal', { entries : entries } );
 	}
+});
+
+router.get('/settings', async function(req, res){
+  if(!req.isAuthenticated()){
+		res.redirect('/');
+  } else {
+  var userEmail = req.user.email
+  res.render('settings', {userEmail: userEmail});
+  }
+});
+
+router.post('/settings', function(req, res){
+  if(!req.isAuthenticated()){
+		res.redirect('/');
+  } else {
+    var userEmail = req.user.email
+    if (req.body.account) {
+      userEmail = req.body.account
+    }
+    res.render('settings', {userEmail: userEmail});
+  }
 });
 
 module.exports = router;

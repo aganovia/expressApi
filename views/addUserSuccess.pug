@@ -1,0 +1,10 @@
+extends layout
+
+block content
+    include ./menu.pug
+    h1 New user added successfully
+    if user != null
+        li: a(href='/') Return to Home
+    else
+        li: a(href='/') Login
+    li: a(href='/addUser') Add another user

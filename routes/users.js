@@ -74,8 +74,8 @@ const validPassword = function(password, salt, hash){
  * how it works with our API here.
  */
 passport.use(new Strategy(
-	function(username, password, done) {
-	  User.findOne({ email: username }, function (err, user) {
+	function(email, password, done) {
+	  User.findOne({ email: email }, function (err, user) {
 		  // Can't connect to Db?  We're done.
 		if (err) {
 			return done(err);
@@ -138,27 +138,77 @@ router.get('/:userId', checkAuth, async function(req, res, next){
 
 /**
  * POST a new user.
- * Only administrators can add new users.
- * Admin account cred:
- * 		email: lilbobbytables@drop.net
- * 		password: password
+ * Anyone can register a new user.
+ * Only admins can register new admin users.
  */
-router.post('/', checkAuth, async function(req, res, next){
+router.post('/', async function(req, res, next){
 	console.log(req.body);
-	if(req.user.admin){
-		var newUser = User();
-		newUser.email = req.body.username;
-		newUser.salt = crypto.randomBytes(32).toString('hex');
-		console.log("Received: " + req.body.password);
-		newUser.password = pbkdf2.pbkdf2Sync(req.body.password, newUser.salt, 1, 32, 'sha512').toString('hex');
-		newUser.admin = false;
-		newUser.save();
-		res.send(200);
-        } else {
-		var error = new Error("Not authorized.");
-		error.status = 401;
-		throw error;
-        }
+	
+	var newUser = User();
+	newUser.email = req.body.email;
+	newUser.salt = crypto.randomBytes(32).toString('hex');
+	console.log("Received: " + req.body.password);
+	newUser.password = pbkdf2.pbkdf2Sync(req.body.password, newUser.salt, 1, 32, 'sha512').toString('hex');
+	if (req.body.admin)
+		newUser.admin = req.body.admin;
+	newUser.save();
+	res.redirect('/addUserSuccess');
 });
+
+router.post('/update/:userEmail', async function(req, res, next){
+
+	// try {
+
+		if (req.body.email){
+			var user = await User.updateOne(
+				{ email: req.params.userEmail },
+				{ $set: { email: req.body.email } }
+			);
+		}
+
+		if (req.body.password){
+			var password = pbkdf2.pbkdf2Sync(req.body.password, user.salt, 1, 32, 'sha512').toString('hex');
+			var user = await User.updateOne(
+				{ email: req.params.userEmail },
+				{ $set: { password: password } }
+			);
+		}
+
+		if (req.body.admin){
+			var user = await User.updateOne(
+				{ email: req.params.userEmail },
+				{ $set: { admin: req.body.admin } }
+			);
+		}
+		
+		res.redirect('/settings');
+
+	// } catch {
+	// 	res.sendStatus(500);
+	// }
+});
+
+router.post('/delete/:userEmail', async function(req, res, next){
+	if(!req.isAuthenticated()) {
+		res.status(404);
+		console.log("User not authenticated.");
+		res.redirect('/settings');
+		return;
+	} else {
+
+	// try to delete the user
+	try {
+		var user = await User.deleteOne({ 
+			email: req.params.userEmail 
+		});
+
+	} catch {
+		res.status(404).redirect('/settings')
+	}
+
+	res.redirect('/settings')
+}
+});
+
 
 module.exports = { checkAuth, router, User, validPassword };
