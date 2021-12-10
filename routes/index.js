@@ -69,17 +69,13 @@ router.get('/settings', async function(req, res){
 });
 
 router.post('/settings', function(req, res){
-  console.log(req.body);
   if(!req.isAuthenticated()){
 		res.redirect('/');
   } else {
     var userEmail = req.user.email
-    console.log("account being passed is: " + req.body.account)
     if (req.body.account) {
-      console.log("Account passed successfully.")
       userEmail = req.body.account
     }
-    console.log("account being chosen is: " + userEmail)
     res.render('settings', {userEmail: userEmail});
   }
 });

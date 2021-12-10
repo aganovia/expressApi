@@ -3,30 +3,48 @@ extends layout
 block content
 	include ./menu.pug
 
-	p *cannot change email and password at the same time
-
 	if user != null
 		if user.admin == true
-			if userEmail == user.email
-				p Your account is selected. Choose a different account below.
-				form(action='/settings' method='post')
-					label(for='account'): b Account TBChanged:
-					input(type='text' name='account')
-					button(type='submit') Choose
-			else
-				p "#{userEmail}" is selected.
+			h1 Account: #{userEmail}
+			p Select a different account to modify below.
+			form(action='/settings' method='post')
+				label(for='account'): b Account:
+				input(type='text' name='account')
+				button(type='submit') Select
 
+		h1 Change Account Details
+		p *one at time
 		form(action=`/users/update/${userEmail}` method='post')
 			label(for='email'): b New Email:
 			input(type='text' name='email')
-			button(type='submit') Change
+			button(type='submit') Change Email
 
+		form(action=`/users/update/${userEmail}` method='post')
 			label(for='password'): b New Password:
 			input(type='password' name='password')
-			button(type='submit') Change
+			button(type='submit') Change Password
 
 		if user.admin == true
-				li: a(href='/addUser') Add a New User
+			form(action=`/users/update/${userEmail}` method='post')
+				label(for='admin'): b Admin
+				input(
+					type='checkbox'
+  					name='admin'
+  					value='true'
+				)
+				label(for='admin'): b Plebian
+				input(
+					type='checkbox'
+  					name='admin'
+  					value='false'
+				)
+				button(type='submit') Change Privileges
+
+			form(action=`/users/delete/${userEmail}` method='post')
+				button(type='submit') DELETE ACCOUNT
+
+			h1 Other Actions
+			li: a(href='/addUser') Add a New User
 	
 	else
 		include ./login.pug

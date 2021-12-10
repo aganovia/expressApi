@@ -157,28 +157,58 @@ router.post('/', async function(req, res, next){
 
 router.post('/update/:userEmail', async function(req, res, next){
 
-	try {
+	// try {
 
-		if (req.body.email != ""){
+		if (req.body.email){
 			var user = await User.updateOne(
 				{ email: req.params.userEmail },
 				{ $set: { email: req.body.email } }
 			);
 		}
 
-		if (req.body.password != ""){
-			let password = pbkdf2.pbkdf2Sync(req.body.password, req.user.salt, 1, 32, 'sha512').toString('hex');
+		if (req.body.password){
+			var password = pbkdf2.pbkdf2Sync(req.body.password, user.salt, 1, 32, 'sha512').toString('hex');
 			var user = await User.updateOne(
 				{ email: req.params.userEmail },
 				{ $set: { password: password } }
 			);
 		}
+
+		if (req.body.admin){
+			var user = await User.updateOne(
+				{ email: req.params.userEmail },
+				{ $set: { admin: req.body.admin } }
+			);
+		}
 		
-		res.redirect('/');
+		res.redirect('/settings');
+
+	// } catch {
+	// 	res.sendStatus(500);
+	// }
+});
+
+router.post('/delete/:userEmail', async function(req, res, next){
+	if(!req.isAuthenticated()) {
+		res.status(404);
+		console.log("User not authenticated.");
+		res.redirect('/settings');
+		return;
+	} else {
+
+	// try to delete the user
+	try {
+		var user = await User.deleteOne({ 
+			email: req.params.userEmail 
+		});
 
 	} catch {
-		res.sendStatus(500);
+		res.status(404).redirect('/settings')
 	}
+
+	res.redirect('/settings')
+}
 });
+
 
 module.exports = { checkAuth, router, User, validPassword };
