@@ -159,6 +159,10 @@ router.post('/update/:userEmail', async function(req, res, next){
 
 	// try {
 
+	var user = await User.findOne({
+		email: req.params.userEmail
+	})
+
 		if (req.body.email){
 			var user = await User.updateOne(
 				{ email: req.params.userEmail },
@@ -167,7 +171,7 @@ router.post('/update/:userEmail', async function(req, res, next){
 		}
 
 		if (req.body.password){
-			var password = pbkdf2.pbkdf2Sync(req.body.password, user.salt, 1, 32, 'sha512').toString('hex');
+			let password = pbkdf2.pbkdf2Sync(req.body.password, user.salt, 1, 32, 'sha512').toString('hex');
 			var user = await User.updateOne(
 				{ email: req.params.userEmail },
 				{ $set: { password: password } }
