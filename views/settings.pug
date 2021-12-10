@@ -7,10 +7,14 @@ block content
 
 	if user != null
 		if user.admin == true
-			form(action='/settings' method='post')
-				label(for='account'): b Account TBChanged:
-				input(type='text' name='account')
-				button(type='submit') Choose
+			if userEmail == user.email
+				p Your account is selected. Choose a different account below.
+				form(action='/settings' method='post')
+					label(for='account'): b Account TBChanged:
+					input(type='text' name='account')
+					button(type='submit') Choose
+			else
+				p "#{userEmail}" is selected.
 
 		form(action=`/users/update/${userEmail}` method='post')
 			label(for='email'): b New Email:

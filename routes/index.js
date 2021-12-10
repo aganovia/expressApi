@@ -62,9 +62,10 @@ router.get('/journal', async function(req, res){
 router.get('/settings', async function(req, res){
   if(!req.isAuthenticated()){
 		res.redirect('/');
-  }
+  } else {
   var userEmail = req.user.email
   res.render('settings', {userEmail: userEmail});
+  }
 });
 
 router.post('/settings', function(req, res){
