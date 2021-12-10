@@ -4,14 +4,14 @@ body {
 }
 
 a {
-  color: #00B7FF;
+  color: #000000;
 }
 
 .menu {
   margin: 1em;
   margin-top: 0em;
   display: flex;
-  background-color: #0065a4;
+  background-color: #000000;
   color: white;	
   list-style: none;
 }
@@ -29,11 +29,11 @@ a {
 
 .menu li a:hover {
 	background-color: white;
-	color: #0065a4;
+	color: #000000;
 }
 
 .footer {
-  background-color: #0065a4;
+  background-color: #000000;
   color: white;
   height: 2.5em;
   margin: 1em;
@@ -41,7 +41,7 @@ a {
 }
 
 .logo {
-  background-color: #0065a4;
+  background-color: #000000;
   margin-left: 1em;
   margin-right: 1em;
   margin-bottom: -.5em;
