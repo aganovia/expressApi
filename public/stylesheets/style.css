@@ -50,3 +50,12 @@ a {
 .about {
   margin: 3em;
 }
+
+h2 {
+  font: 16px "Lucida Grande", Helvetica, Arial, sans-serif;
+  color:red;
+}
+
+#delete {
+  color:red
+}
