@@ -155,13 +155,13 @@ router.post('/', async function(req, res, next){
 	res.redirect('/addUserSuccess');
 });
 
-router.post('/update', async function(req, res, next){
+router.post('/update/:userEmail', async function(req, res, next){
 
 	try {
 
 		if (req.body.email != ""){
 			var user = await User.updateOne(
-				{ email: req.user.email },
+				{ email: req.params.userEmail },
 				{ $set: { email: req.body.email } }
 			);
 		}
@@ -169,7 +169,7 @@ router.post('/update', async function(req, res, next){
 		if (req.body.password != ""){
 			let password = pbkdf2.pbkdf2Sync(req.body.password, req.user.salt, 1, 32, 'sha512').toString('hex');
 			var user = await User.updateOne(
-				{ email: req.user.email },
+				{ email: req.params.userEmail },
 				{ $set: { password: password } }
 			);
 		}

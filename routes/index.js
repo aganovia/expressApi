@@ -62,8 +62,24 @@ router.get('/journal', async function(req, res){
 router.get('/settings', async function(req, res){
   if(!req.isAuthenticated()){
 		res.redirect('/');
+  }
+  var userEmail = req.user.email
+  res.render('settings', {userEmail: userEmail});
+});
+
+router.post('/settings', function(req, res){
+  console.log(req.body);
+  if(!req.isAuthenticated()){
+		res.redirect('/');
   } else {
-    res.render('settings');
+    var userEmail = req.user.email
+    console.log("account being passed is: " + req.body.account)
+    if (req.body.account) {
+      console.log("Account passed successfully.")
+      userEmail = req.body.account
+    }
+    console.log("account being chosen is: " + userEmail)
+    res.render('settings', {userEmail: userEmail});
   }
 });
 

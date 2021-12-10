@@ -3,10 +3,16 @@ extends layout
 block content
 	include ./menu.pug
 
-	p *only one can be changed at a time
+	p *cannot change email and password at the same time
 
 	if user != null
-		form(action='/users/update' method='post')
+		if user.admin == true
+			form(action='/settings' method='post')
+				label(for='account'): b Account TBChanged:
+				input(type='text' name='account')
+				button(type='submit') Choose
+
+		form(action=`/users/update/${userEmail}` method='post')
 			label(for='email'): b New Email:
 			input(type='text' name='email')
 			button(type='submit') Change
